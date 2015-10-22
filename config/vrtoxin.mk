@@ -17,8 +17,8 @@
 # TARGET_SM_AND can be set before this file to override the default of gcc 4.8 for ROM.
 # This is to avoid hardcoding the gcc versions for the ROM and kernels.
 
- TARGET_SM_AND := $(TARGET_GCC_VERSION)
- TARGET_SM_KERNEL := $(TARGET_GCC_VERSION_ARM)
+ TARGET_SM_AND := $(TARGET_VRTOXIN_ROM)
+ TARGET_SM_KERNEL := $(TARGET_VRTOXIN_ARM)
 
  # Set GCC colors
  export GCC_COLORS := 'error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -97,11 +97,19 @@ ifeq (true,$(USE_O3_OPTIMIZATIONS))
 OPT6 := (O3)
 endif
 
-ifeq (true,$(USE_PIPE))
-OPT7 := (pipe)
+ifeq (true,$(OFAST_OPTS))
+OPT7 := (OFast)
 endif
 
-GCC_OPTIMIZATION_LEVELS := $(OPT1)$(OPT2)$(OPT3)$(OPT4)$(OPT5)$(OPT6)$(OPT7)
+ifeq (true,$(FLOOP_NEST_OPTIMIZE))
+OPT8 := (floop_nest_opt)
+endif
+
+ifeq (true,$(USE_PIPE))
+OPT9 := (pipe)
+endif
+
+GCC_OPTIMIZATION_LEVELS := $(OPT1)$(OPT2)$(OPT3)$(OPT4)$(OPT5)$(OPT6)$(OPT7)$(OPT8)$(OPT9)
 ifneq (,$(GCC_OPTIMIZATION_LEVELS))
 ADDITIONAL_BUILD_PROPERTIES += \
     ro.sm.flags=$(GCC_OPTIMIZATION_LEVELS)
