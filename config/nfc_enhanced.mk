@@ -1,3 +1,3 @@
-# This device supports CM enhanced NFC
+# This device supports VRToxin enhanced NFC
 PRODUCT_COPY_FILES += \
-    vendor/cm/config/permissions/com.cyanogenmod.nfc.enhanced.xml:system/etc/permissions/com.cyanogenmod.nfc.enhanced.xml
+    vendor/vrtoxin/config/permissions/com.vrtoxin.nfc.enhanced.xml:system/etc/permissions/com.vrtoxin.nfc.enhanced.xml
