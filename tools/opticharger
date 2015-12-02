@@ -1,177 +1,163 @@
 #!/bin/bash
+#
+# Super-mega VRToxin opticharger of doom
+# Shrinks apks by running pngquant, pngcrush, optipng or pngout on png images
+#
 
-usage()
-{
-    echo -e ""
-    echo -e ${txtbld}"Usage:"${txtrst}
-    echo -e "  build-vrtoxin.sh [options] device"
-    echo -e ""
-    echo -e ${txtbld}"  Options:"${txtrst}
-    echo -e "    -c# Cleanin options before build:"
-    echo -e "        1 - make clean"
-    echo -e "        2 - make dirty"
-    echo -e "        3 - make magic"
-    echo -e "        4 - make kernelclean"
-    echo -e "        -d  Use dex optimizations"
-    echo -e "        -f Build with prebuilt chromium"
-    echo -e "        -j# Set jobs"
-    echo -e "        -s  Sync before build"
-    echo -e "        -v  Verbose build output"
-    echo -e ""
-    echo -e ${txtbld}"  Example:"${txtrst}
-    echo -e "    ./build-vrtoxin.sh -f -j16 klte"
-    echo -e ""
-    exit 1
-}
+. $ANDROID_BUILD_TOP/vendor/vrtoxin/tools/colors
 
-# colors
-. ./vendor/vrtoxin/tools/colors
-
-if [ ! -d ".repo" ]; then
-    echo -e ${red}"No .repo directory found.  Is this an Android build tree?"${txtrst}
-    exit 1
-fi
-# figure out the output directories
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-thisDIR="${PWD##*/}"
-
-findOUT() {
-if [ -n "${OUT_DIR_COMMON_BASE+x}" ]; then
-return 1; else
-return 0
-fi;}
-
-findOUT
-RES="$?"
-
-if [ $RES = 1 ];then
-    export OUTDIR=$OUT_DIR_COMMON_BASE/$thisDIR
-    echo -e ""
-    echo -e ${cya}"External out DIR is set ($OUTDIR)"${txtrst}
-    echo -e ""
-elif [ $RES = 0 ];then
-    export OUTDIR=$DIR/out
-    echo -e ""
-    echo -e ${cya}"No external out, using default ($OUTDIR)"${txtrst}
-    echo -e ""
+OUT_TARGET_HOST=$(uname -a | grep Darwin)
+if [ -z "$OUT_TARGET_HOST" ]
+then
+    OUT_TARGET_HOST=linux-x86
 else
-    echo -e ""
-    echo -e ${red}"NULL"${txtrst}
-    echo -e ${red}"Error wrong results"${txtrst}
-    echo -e ""
+    OUT_TARGET_HOST=darwin-x86
 fi
 
-# get OS (linux / Mac OS x)
-IS_DARWIN=$(uname -a | grep Darwin)
-if [ -n "$IS_DARWIN" ]; then
-    CPUS=$(sysctl hw.ncpu | awk '{print $2}')
-    DATE=gdate
+set -e
+QUIET=1
+BASE=`pwd`
+BRUTECRUSH="-brute"
+TMPDIR=/tmp/opticharge-$$
+
+if [ -z "$BRUTE_PNGCRUSH" ]
+then
+    BRUTECRUSH=""
+fi
+
+if [ "$APKCERTS" = "" ];
+then
+    if [ "$TARGET_BUILD_VARIANT" = "userdebug" ]; then
+       TARGET_BUILD_VARIANT="eng"
+    elif [ "$TARGET_BUILD_VARIANT" = "user" ]; then
+       TARGET_BUILD_VARIANT="eng"
+    fi
+
+    APKCERTS=$OUT/obj/PACKAGING/target_files_intermediates/$TARGET_PRODUCT-target_files-$TARGET_BUILD_VARIANT.$USER/META/apkcerts.txt
+    if [ ! -f "$APKCERTS" ];
+    then
+        echo -e ${red}"Set APKCERTS to the path to your apkcerts.txt file"${txtrst}
+        exit 1;
+    fi
+fi
+
+if [ ! -f "$APKCERTS" ];
+then
+    echo -e ${red}"Invalid path to apkcerts.txt, set APKCERTS to the correct path."${txtrst}
+fi
+
+if [ "$(which pngquant)" != "" ];
+then
+    optimize_png () {
+        pngquant --speed 1 --force --ext .png $1 1> /dev/null 2> /dev/null
+    }
+elif [ "$(which pngcrush)" != "" ];
+then
+    optimize_png () {
+        pngcrush -q ${BRUTECRUSH} $1 ${1}.out 1> /dev/null 2> /dev/null
+        mv ${1}.out ${1} 2> /dev/null
+    }
+elif [ "$(which optipng)" != "" ];
+then
+    optimize_png () {
+        optipng -o7 -quiet $1 1> /dev/null 2> /dev/null
+    }
+elif [ "$(which pngout-static)" != "" ];
+then
+    optimize_png () {
+        pngout-static $1
+    }
+elif [ "$(which pngout)" != "" ];
+then
+    optimize_png () {
+        pngout $1
+    }
 else
-    CPUS=$(grep "^processor" /proc/cpuinfo | wc -l)
-    DATE=date
+    echo -e ${red}"Please install pngquant, pngcrush, optipng, or pngout"${txtrst}
+    exit 1;
 fi
 
-export USE_CCACHE=1
-
-opt_clean=0
-opt_dex=0
-opt_chromium=0
-opt_jobs="$CPUS"
-opt_sync=0
-opt_verbose=0
-
-while getopts "c:dij:psfo:v" opt; do
-    case "$opt" in
-    c) opt_clean="$OPTARG" ;;
-    d) opt_dex=1 ;;
-    f) opt_chromium=1 ;;
-    j) opt_jobs="$OPTARG" ;;
-    s) opt_sync=1 ;;
-    v) opt_verbose=1 ;;
-    *) usage
-    esac
-done
-shift $((OPTIND-1))
-if [ "$#" -ne 1 ]; then
-    usage
-fi
-device="$1"
-
-
-if [ "$opt_clean" -eq 1 ]; then
-    make clean >/dev/null
-    echo -e ""
-    echo -e ${bldblu}"Got rid of the garbage"${txtrst}
-    echo -e ""
-elif [ "$opt_clean" -eq 2 ]; then
-    make dirty >/dev/null
-    echo -e ""
-    echo -e ${bldblu}"Full of crap"${txtrst}
-    echo -e ""
-elif [ "$opt_clean" -eq 3 ]; then
-    make magic >/dev/null
-    echo -e ""
-    echo -e ${bldblu}"Muhahaha"${txtrst}
-    echo -e ""
-elif [ "$opt_clean" -eq 4 ]; then
-    make kernelclean >/dev/null
-    echo -e ""
-    echo -e ${bldblu}"All kernel components have been removed"${txtrst}
-    echo -e ""
+if [ "`which aapt`" = "" ];
+then
+    echo -e ${red}"Please ensure aapt is in your \$PATH"${txtrst}
+    exit 1;
 fi
 
-# sync with latest sources
-if [ "$opt_sync" -ne 0 ]; then
-    echo -e ""
-    echo -e ${bldblu}"Getting the latest shit"${txtrst}
-    repo sync -j"$opt_jobs"
-    echo -e ""
+if [ "`which zipalign`" = "" ];
+then
+    echo -e ${red}"Please ensure zipalign is in your \$PATH"${txtrst}
+    exit 1;
 fi
 
-rm -f $OUTDIR/target/product/$device/obj/KERNEL_OBJ/.version
+if [ -e "$1" ];
+then
+    NAME=`basename $1`;
+    echo -e ${bldgrn}"Optimizing:${txtrst} $NAME...";
 
-# get time of startup
-t1=$($DATE +%s)
+    if [ "$2" != "" ];
+    then
+        if [ "$DEFAULT_SYSTEM_DEV_CERTIFICATE" ]; then
+            CERT_PATH=`dirname $DEFAULT_SYSTEM_DEV_CERTIFICATE`
+        else
+            CERT_PATH=build/target/product/security
+        fi
+        CERT="$CERT_PATH"/$2.x509.pem
+        KEY="$CERT_PATH"/$2.pk8
+        if [ ! -f "$ANDROID_BUILD_TOP/$CERT" ];
+        then
+            echo -e ${red}"$CERT does not exist!"${txtrst};
+            exit 1;
+        fi
+    else
+        APKINFO=`grep "name=\"$NAME\"" $APKCERTS`;
+        [ $QUIET ] || echo -e "APKINFO: $APKINFO";
+        if [ "$APKINFO" = "" ];
+        then
+            echo -e ${red}"No apk info for $NAME"${txtrst};
+            exit 1;
+        fi
+        CERT=`echo -e $APKINFO | awk {'print $2'} | cut -f 2 -d "=" | tr -d "\""`;
+        KEY=`echo -e $APKINFO | awk {'print $3'} | cut -f 2 -d "=" | tr -d "\""`;
+        if [ "$CERT" = "" ];
+        then
+            echo -e ${red}"Unable to find certificate for $NAME"${txtrst}
+            exit 1;
+        fi
+        if [ "$CERT" = "PRESIGNED" ];
+        then
+            echo -e ${cya}"$NAME is presigned, skipping"${txtrst}
+            exit 1;
+        fi
+    fi
 
-# setup environment
-echo -e ${bldblu}"Getting ready"${txtrst}
-. build/envsetup.sh
+    [ $QUIET ] || echo -e ${bldylw}"Certificate:${txtrst} $CERT";
 
-# Remove system folder (this will create a new build.prop with updated build time and date)
-rm -f $OUTDIR/target/product/$device/system/build.prop
-rm -f $OUTDIR/target/product/$device/system/app/*.odex
-rm -f $OUTDIR/target/product/$device/system/framework/*.odex
+    [ -d $TMPDIR/$NAME ] && rm -rf $TMPDIR/$NAME
+    mkdir -p $TMPDIR/$NAME
+    trap "rm -rf $TMPDIR; exit" INT TERM EXIT
+    cd $TMPDIR/$NAME
+    unzip -q $BASE/$1
+    for x in `find . -name "*.png" | grep -v "\.9.png$" | tr "\n" " "`
+    do
+        [ $QUIET ] || echo -e ${bldgrn}"Crushing${txtrst} $x"
+        optimize_png $x
+    done
+    cp $BASE/$1 $BASE/$1.old
 
-if [ "$opt_chromium" -ne 0 ]; then
-    echo -e ""
-    echo -e ${bldblu}"Using prebuilt chromium cheat code"${txtrst}
-    export USE_PREBUILT_CHROMIUM=1
-fi
+    [ $QUIET ] || echo -e ${bldgrn}"Repacking apk.."${txtrst}
+    aapt p -0 .dat -0 .dict -0 .arsc -F $NAME .
 
-# lunch device
-echo -e ""
-echo -e ${bldblu}"Getting your device"${txtrst}
-lunch "vrtoxin_$device-userdebug";
+    [ $QUIET ] || echo -e ${bldgrn}"Resigning with cert:${txtrst} `echo -e $CERT`"
 
-echo -e ""
-echo -e ${bldblu}"Preparing VRToxin Build"${txtrst}
-
-# start compilation
-if [ "$opt_dex" -ne 0 ]; then
-    export WITH_DEXPREOPT=true
-fi
-
-if [ "$opt_verbose" -ne 0 ]; then
-make -j"$opt_jobs" showcommands vrtoxin
+    [ $QUIET ] || echo java -jar $ANDROID_HOST_OUT/framework/signapk.jar $ANDROID_BUILD_TOP/$CERT $ANDROID_BUILD_TOP/$KEY $NAME signed_$NAME
+    java -jar $ANDROID_HOST_OUT/framework/signapk.jar $ANDROID_BUILD_TOP/$CERT $ANDROID_BUILD_TOP/$KEY $NAME signed_$NAME
+    [ $QUIET ] || echo -e ${bldgrn}"Zipalign.."${txtrst}
+    zipalign -f 4 signed_$NAME $BASE/$1
+    if [ ! $QUIET ]; then
+        ls -l $BASE/$1.old
+        ls -l $BASE/$1
+    fi
+    rm $BASE/$1.old
 else
-make -j"$opt_jobs" vrtoxin
+    echo -e "Usage: $0 [apk file]"
 fi
-echo -e ""
-
-# finished? get elapsed time
-t2=$($DATE +%s)
-
-tmin=$(( (t2-t1)/60 ))
-tsec=$(( (t2-t1)%60 ))
-
-echo -e ${bldgrn}"Total time elapsed:${txtrst} ${grn}$tmin minutes $tsec seconds"${txtrst}
