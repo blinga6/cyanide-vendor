@@ -13,13 +13,12 @@ usage()
     echo -e "        3 - make magic"
     echo -e "        4 - make kernelclean"
     echo -e "        -d  Use dex optimizations"
-    echo -e "        -f Build with prebuilt chromium"
     echo -e "        -j# Set jobs"
     echo -e "        -s  Sync before build"
     echo -e "        -v  Verbose build output"
     echo -e ""
     echo -e ${txtbld}"  Example:"${txtrst}
-    echo -e "    ./build-vrtoxin.sh -f -j16 klte"
+    echo -e "    ./build-vrtoxin.sh -s -j16 klte"
     echo -e ""
     exit 1
 }
@@ -75,7 +74,6 @@ export USE_CCACHE=1
 
 opt_clean=0
 opt_dex=0
-opt_chromium=0
 opt_jobs="$CPUS"
 opt_sync=0
 opt_verbose=0
@@ -84,7 +82,6 @@ while getopts "c:dij:psfo:v" opt; do
     case "$opt" in
     c) opt_clean="$OPTARG" ;;
     d) opt_dex=1 ;;
-    f) opt_chromium=1 ;;
     j) opt_jobs="$OPTARG" ;;
     s) opt_sync=1 ;;
     v) opt_verbose=1 ;;
@@ -141,12 +138,6 @@ echo -e ${bldblu}"Getting ready"${txtrst}
 rm -f $OUTDIR/target/product/$device/system/build.prop
 rm -f $OUTDIR/target/product/$device/system/app/*.odex
 rm -f $OUTDIR/target/product/$device/system/framework/*.odex
-
-if [ "$opt_chromium" -ne 0 ]; then
-    echo -e ""
-    echo -e ${bldblu}"Using prebuilt chromium cheat code"${txtrst}
-    export USE_PREBUILT_CHROMIUM=1
-fi
 
 # lunch device
 echo -e ""
