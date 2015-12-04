@@ -68,6 +68,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 		vendor/vrtoxin/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
 
+# Optional LayersManager
+ifdef VRTOXIN_LAYERS
+PRODUCT_COPY_FILES += \
+		vendor/vrtoxin/prebuilt/common/app/LayersManager.apk:system/app/LayersManager.apk
+endif
+
 # SuperSU
 PRODUCT_COPY_FILES += \
     vendor/vrtoxin/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
@@ -215,69 +221,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PACKAGE_OVERLAYS += vendor/vrtoxin/overlay/common
 
-VRTOXIN_BUILDTYPE = RELEASE
-PRODUCT_VERSION_MAJOR = 6.0
-PRODUCT_VERSION_MAINTENANCE = 2.0
-
-# Set VRTOXIN_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
-
+#Let builder choose custom buildtype. Default to RELEASE
 ifndef VRTOXIN_BUILDTYPE
-    ifdef RELEASE_TYPE
-        # Starting with "VRTOXIN_" is optional
-        RELEASE_TYPE := $(shell echo $(RELEASE_TYPE) | sed -e 's|^VRTOXIN_||g')
-        VRTOXIN_BUILDTYPE := $(RELEASE_TYPE)
-    endif
+VRTOXIN_BUILDTYPE = RELEASE
 endif
 
-# Filter out random types, so it'll reset to UNOFFICIAL
-ifeq ($(filter RELEASE NIGHTLY SNAPSHOT EXPERIMENTAL,$(VRTOXIN_BUILDTYPE)),)
-    VRTOXIN_BUILDTYPE :=
-endif
-
-ifdef VRTOXIN_BUILDTYPE
-    ifneq ($(VRTOXIN_BUILDTYPE), SNAPSHOT)
-        ifdef VRTOXIN_EXTRAVERSION
-            # Force build type to EXPERIMENTAL
-            VRTOXIN_BUILDTYPE := EXPERIMENTAL
-            # Remove leading dash from VRTOXIN_EXTRAVERSION
-            VRTOXIN_EXTRAVERSION := $(shell echo $(VRTOXIN_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to VRTOXIN_EXTRAVERSION
-            VRTOXIN_EXTRAVERSION := -$(VRTOXIN_EXTRAVERSION)
-        endif
-    else
-        ifndef VRTOXIN_EXTRAVERSION
-            # Force build type to EXPERIMENTAL, SNAPSHOT mandates a tag
-            VRTOXIN_BUILDTYPE := EXPERIMENTAL
-        else
-            # Remove leading dash from VRTOXIN_EXTRAVERSION
-            VRTOXIN_EXTRAVERSION := $(shell echo $(VRTOXIN_EXTRAVERSION) | sed 's/-//')
-            # Add leading dash to VRTOXIN_EXTRAVERSION
-            VRTOXIN_EXTRAVERSION := -$(VRTOXIN_EXTRAVERSION)
-        endif
-    endif
-else
-    # If VRTOXIN_BUILDTYPE is not defined, set to UNOFFICIAL
-    VRTOXIN_BUILDTYPE := UNOFFICIAL
-    VRTOXIN_EXTRAVERSION :=
-endif
-
-ifeq ($(VRTOXIN_BUILDTYPE), UNOFFICIAL)
-    ifneq ($(TARGET_UNOFFICIAL_BUILD_ID),)
-        VRTOXIN_EXTRAVERSION := -$(TARGET_UNOFFICIAL_BUILD_ID)
-    endif
-endif
-
-ifeq ($(VRTOXIN_BUILDTYPE), RELEASE)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-        VRTOXIN_VERSION := $(PRODUCT_VERSION_MAJOR)-$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(VRTOXIN_BUILD)
-    else
-        ifeq ($(TARGET_BUILD_VARIANT),user)
-            VRTOXIN_VERSION := $(PRODUCT_VERSION_MAJOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)-$(VRTOXIN_BUILD)
-        else
-            VRTOXIN_VERSION := $(PRODUCT_VERSION_MAJOR)-$(PRODUCT_VERSION_MAINTENANCE)$(PRODUCT_VERSION_DEVICE_SPECIFIC)-$(VRTOXIN_BUILD)
-        endif
-    endif
-endif
+PRODUCT_VERSION_MAJOR = 2
+PRODUCT_VERSION_MAINTENANCE = 0
+VRTOXIN_VERSION := VRToxin-v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MAINTENANCE)-$(shell date +%Y%m%d)-$(VRTOXIN_BUILD)-$(VRTOXIN_BUILDTYPE)
 
 PRODUCT_PROPERTY_OVERRIDES += \
   ro.vrtoxin.version=$(VRTOXIN_VERSION) \
@@ -287,25 +238,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 -include vendor/vrtoxin-priv/keys/keys.mk
 
 VRTOXIN_DISPLAY_VERSION := $(VRTOXIN_VERSION)
-
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),)
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),build/target/product/security/testkey)
-  ifneq ($(VRTOXIN_BUILDTYPE), UNOFFICIAL)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-      ifneq ($(VRTOXIN_EXTRAVERSION),)
-        # Remove leading dash from VRTOXIN_EXTRAVERSION
-        VRTOXIN_EXTRAVERSION := $(shell echo $(VRTOXIN_EXTRAVERSION) | sed 's/-//')
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(VRTOXIN_EXTRAVERSION)
-      else
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(shell date -u +%Y%m%d)
-      endif
-    else
-      TARGET_VENDOR_RELEASE_BUILD_ID := $(TARGET_VENDOR_RELEASE_BUILD_ID)
-    endif
-    VRTOXIN_DISPLAY_VERSION=$(PRODUCT_VERSION_MAJOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)
-  endif
-endif
-endif
 
 # by default, do not update the recovery with system updates
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.recovery_update=false
