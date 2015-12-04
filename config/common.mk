@@ -68,9 +68,11 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 		vendor/vrtoxin/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
 
-# Workaround for LayersManager zipalign fails
+# Optional LayersManager
+ifdef VRTOXIN_LAYERS
 PRODUCT_COPY_FILES += \
 		vendor/vrtoxin/prebuilt/common/app/LayersManager.apk:system/app/LayersManager.apk
+endif
 
 # SuperSU
 PRODUCT_COPY_FILES += \
