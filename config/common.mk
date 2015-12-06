@@ -152,7 +152,8 @@ PRODUCT_PACKAGES += \
 # Custom VRToxin packages
 PRODUCT_PACKAGES += \
     Launcher3 \
-    LockClock
+    LockClock \
+    OmniSwitch
 
 # Extra tools in VRToxin
 PRODUCT_PACKAGES += \
