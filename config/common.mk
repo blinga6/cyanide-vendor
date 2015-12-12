@@ -151,7 +151,7 @@ PRODUCT_PACKAGES += \
 
 # Custom VRToxin packages
 PRODUCT_PACKAGES += \
-    Launcher3 \
+    Eleven \
     LockClock \
     OmniSwitch
 
