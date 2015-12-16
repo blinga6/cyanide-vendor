@@ -60,6 +60,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.android.dateformat=MM-dd-yyyy \
     ro.com.android.dataroaming=false
 
+# Proprietary latinime lib needed for Keyboard swyping
+PRODUCT_COPY_FILES += \
+    vendor/vrtoxin/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
+
 # Workaround for NovaLauncher zipalign fails
 PRODUCT_COPY_FILES += \
 		vendor/vrtoxin/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
