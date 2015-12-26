@@ -63,6 +63,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Proprietary latinime lib needed for Keyboard swyping
 PRODUCT_COPY_FILES += \
     vendor/cyanide/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
+    
+# Layers Backup
+PRODUCT_COPY_FILES += \
+    vendor/cyanide/prebuilt/common/bin/71-layers.sh:system/addon.d/71-layers.sh
+
+PRODUCT_COPY_FILES += \
+    vendor/cyanide/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
 
 # Workaround for NovaLauncher zipalign fails
 PRODUCT_COPY_FILES += \
