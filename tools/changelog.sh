@@ -14,7 +14,7 @@ fi
 touch $Changelog
 
 # Print something to build output
-for i in $(seq 5);
+for i in $(seq 7);
 do
 export After_Date=`date --date="$i days ago" +%m-%d-%Y`
 k=$(expr $i - 1)
