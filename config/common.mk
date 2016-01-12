@@ -157,7 +157,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Eleven \
     LockClock \
-    OmniSwitch
+    OmniSwitch \
+    VRToxinMods \
+    KernelAdiutor
 
 # Extra tools in VRToxin
 PRODUCT_PACKAGES += \
