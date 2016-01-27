@@ -72,6 +72,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 		vendor/vrtoxin/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
 
+# Optional KernelAdiutor
+ifdef KERNEL_APP
+PRODUCT_COPY_FILES += \
+		vendor/vrtoxin/prebuilt/common/priv-app/KernelAdiutor.apk:system/priv-app/KernelAdiutor.apk
+endif
+
 # Optional LayersManager
 ifdef VRTOXIN_LAYERS
 PRODUCT_COPY_FILES += \
@@ -158,8 +164,7 @@ PRODUCT_PACKAGES += \
     Eleven \
     LockClock \
     OmniSwitch \
-    VRToxinMods \
-    KernelAdiutor
+    VRToxinMods
 
 # Extra tools in VRToxin
 PRODUCT_PACKAGES += \
