@@ -1,4 +1,4 @@
-PRODUCT_BRAND ?= vrtoxin
+PRODUCT_BRAND ?= cyanide
 
 ifneq ($(TARGET_SCREEN_WIDTH) $(TARGET_SCREEN_HEIGHT),$(space))
 # determine the smaller dimension
@@ -10,7 +10,7 @@ TARGET_BOOTANIMATION_SIZE := $(shell \
   fi )
 
 # get a sorted list of the sizes
-bootanimation_sizes := $(subst .zip,, $(shell ls vendor/vrtoxin/prebuilt/common/bootanimation))
+bootanimation_sizes := $(subst .zip,, $(shell ls vendor/cyanide/prebuilt/common/bootanimation))
 bootanimation_sizes := $(shell echo -e $(subst $(space),'\n',$(bootanimation_sizes)) | sort -rn)
 
 # find the appropriate size and set
@@ -27,18 +27,18 @@ endef
 $(foreach size,$(bootanimation_sizes), $(call check_and_set_bootanimation,$(size)))
 
 ifeq ($(TARGET_BOOTANIMATION_HALF_RES),true)
-PRODUCT_BOOTANIMATION := vendor/vrtoxin/prebuilt/common/bootanimation/halfres/$(TARGET_BOOTANIMATION_NAME).zip
+PRODUCT_BOOTANIMATION := vendor/cyanide/prebuilt/common/bootanimation/halfres/$(TARGET_BOOTANIMATION_NAME).zip
 else
-PRODUCT_BOOTANIMATION := vendor/vrtoxin/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip
+PRODUCT_BOOTANIMATION := vendor/cyanide/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip
 endif
 endif
 
-ifdef VRTOXIN_NIGHTLY
+ifdef CYANIDE_NIGHTLY
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.rommanager.developerid=vrtoxinnightly
+    ro.rommanager.developerid=cyanidenightly
 else
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.rommanager.developerid=vrtoxin
+    ro.rommanager.developerid=cyanide
 endif
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
@@ -62,32 +62,20 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Proprietary latinime lib needed for Keyboard swyping
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
+    vendor/cyanide/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
 
 # Workaround for NovaLauncher zipalign fails
 PRODUCT_COPY_FILES += \
-		vendor/vrtoxin/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
+		vendor/cyanide/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
 		
 # Workaround for ESFileManager zipalign fails
 PRODUCT_COPY_FILES += \
-		vendor/vrtoxin/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
-
-# Optional KernelAdiutor
-ifdef KERNEL_APP
-PRODUCT_COPY_FILES += \
-		vendor/vrtoxin/prebuilt/common/priv-app/KernelAdiutor.apk:system/priv-app/KernelAdiutor.apk
-endif
-
-# Optional LayersManager
-ifdef VRTOXIN_LAYERS
-PRODUCT_COPY_FILES += \
-		vendor/vrtoxin/prebuilt/common/app/LayersManager.apk:system/app/LayersManager.apk
-endif
+		vendor/cyanide/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
 
 # SuperSU
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
-    vendor/vrtoxin/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon
+    vendor/cyanide/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
+    vendor/cyanide/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.build.selinux=1
@@ -105,34 +93,34 @@ endif
 # Backup Tool
 ifneq ($(WITH_GMS),true)
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
-    vendor/vrtoxin/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
-    vendor/vrtoxin/prebuilt/common/bin/50-vrtoxin.sh:system/addon.d/50-vrtoxin.sh \
-    vendor/vrtoxin/prebuilt/common/bin/blacklist:system/addon.d/blacklist
+    vendor/cyanide/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
+    vendor/cyanide/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
+    vendor/cyanide/prebuilt/common/bin/50-cyanide.sh:system/addon.d/50-cyanide.sh \
+    vendor/cyanide/prebuilt/common/bin/blacklist:system/addon.d/blacklist
 endif
 
 # Signature compatibility validation
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/bin/otasigcheck.sh:install/bin/otasigcheck.sh
+    vendor/cyanide/prebuilt/common/bin/otasigcheck.sh:install/bin/otasigcheck.sh
 
 # init.d support
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
-    vendor/vrtoxin/prebuilt/common/bin/sysinit:system/bin/sysinit
+    vendor/cyanide/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
+    vendor/cyanide/prebuilt/common/bin/sysinit:system/bin/sysinit
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
 # userinit support
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit
+    vendor/cyanide/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit
 endif
 
-# VRToxin-specific init file
+# Cyanide-specific init file
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/etc/init.local.rc:root/init.vrtoxin.rc
+    vendor/cyanide/prebuilt/common/etc/init.local.rc:root/init.cyanide.rc
 
 # Copy over added mimetype supported in libcore.net.MimeUtils
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/prebuilt/common/lib/content-types.properties:system/lib/content-types.properties
+    vendor/cyanide/prebuilt/common/lib/content-types.properties:system/lib/content-types.properties
 
 # Enable SIP+VoIP on all targets
 PRODUCT_COPY_FILES += \
@@ -142,31 +130,29 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     frameworks/base/data/keyboards/Vendor_045e_Product_028e.kl:system/usr/keylayout/Vendor_045e_Product_0719.kl
 
-# This is VRToxin!
+# This is Cyanide!
 PRODUCT_COPY_FILES += \
-    vendor/vrtoxin/config/permissions/com.vrtoxin.android.xml:system/etc/permissions/com.vrtoxin.android.xml
+    vendor/cyanide/config/permissions/com.cyanide.android.xml:system/etc/permissions/com.cyanide.android.xml
 
-# Required VRToxin packages
+# Required Cyanide packages
 PRODUCT_PACKAGES += \
     Development
 
-# Optional VR packages
+# Optional Cyanide packages
 PRODUCT_PACKAGES += \
-    libemoji \
-    Terminal
+    libemoji
 
 # Include librsjni explicitly to workaround GMS issue
 PRODUCT_PACKAGES += \
     librsjni
 
-# Custom VRToxin packages
+# Custom Cyanide packages
 PRODUCT_PACKAGES += \
     Eleven \
     LockClock \
-    OmniSwitch \
-    VRTUpdater
+    OmniSwitch
 
-# Extra tools in VRToxin
+# Extra tools in Cyanide
 PRODUCT_PACKAGES += \
     libsepol \
     e2fsck \
@@ -231,32 +217,32 @@ endif
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.root_access=1
 
-PRODUCT_PACKAGE_OVERLAYS += vendor/vrtoxin/overlay/common
+PRODUCT_PACKAGE_OVERLAYS += vendor/cyanide/overlay/common
 
 #Let builder choose custom buildtype. Default to RELEASE
-ifndef VRTOXIN_BUILDTYPE
-VRTOXIN_BUILDTYPE = RELEASE
+ifndef CYANIDE_BUILDTYPE
+CYANIDE_BUILDTYPE = RELEASE
 endif
 
 PRODUCT_VERSION_MAJOR = 4
 PRODUCT_VERSION_MAINTENANCE = 0
-VRTOXIN_VERSION := VRToxin-v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MAINTENANCE)-$(VRTOXIN_BUILD)-$(VRTOXIN_BUILDTYPE)-$(shell date +%Y%m%d)
+CYANIDE_VERSION := Cyanide-v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MAINTENANCE)-$(CYANIDE_BUILD)-$(CYANIDE_BUILDTYPE)-$(shell date +%Y%m%d)
 
 PRODUCT_PROPERTY_OVERRIDES += \
-  ro.vrtoxin.version=$(VRTOXIN_VERSION) \
-  vrtoxin.ota.version=$(shell date -u +%Y%m%d) \
-  ro.vrtoxin.releasetype=$(VRTOXIN_BUILDTYPE) \
-  ro.modversion=$(VRTOXIN_VERSION) 
+  ro.cyanide.version=$(CYANIDE_VERSION) \
+  cyanide.ota.version=$(shell date -u +%Y%m%d) \
+  ro.cyanide.releasetype=$(CYANIDE_BUILDTYPE) \
+  ro.modversion=$(CYANIDE_VERSION) 
 
--include vendor/vrtoxin-priv/keys/keys.mk
+-include vendor/cyanide-priv/keys/keys.mk
 
-VRTOXIN_DISPLAY_VERSION := $(VRTOXIN_VERSION)
+CYANIDE_DISPLAY_VERSION := $(CYANIDE_VERSION)
 
 # by default, do not update the recovery with system updates
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.recovery_update=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
-  ro.vrtoxin.display.version=$(VRTOXIN_DISPLAY_VERSION)
+  ro.cyanide.display.version=$(CYANIDE_DISPLAY_VERSION)
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
 

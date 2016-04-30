@@ -1,3 +1,3 @@
-. "$(gettop)/vendor/vrtoxin/build/envsetup.sh"
+. "$(gettop)/vendor/cyanide/build/envsetup.sh"
 
-vrtoxin_device_combos
+cyanide_device_combos

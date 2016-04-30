@@ -23,4 +23,4 @@
 LOCAL_PATH := $(call my-dir)
 
 # Include OptiPop common configuration
-include vendor/vrtoxin/config/vrtoxin.mk
+include vendor/cyanide/config/cyanide.mk

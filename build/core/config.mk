@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BUILD_MAVEN_PREBUILT := $(TOP)/vendor/vrtoxin/build/core/maven_artifact.mk
-PUBLISH_MAVEN_PREBUILT := $(TOP)/vendor/vrtoxin/build/core/maven_artifact_publish.mk
+BUILD_MAVEN_PREBUILT := $(TOP)/vendor/cyanide/build/core/maven_artifact.mk
+PUBLISH_MAVEN_PREBUILT := $(TOP)/vendor/cyanide/build/core/maven_artifact_publish.mk

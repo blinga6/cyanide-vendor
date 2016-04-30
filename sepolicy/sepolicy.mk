@@ -1,7 +1,7 @@
 #
 # This policy configuration will be used by all products that
-# inherit from VRToxin
+# inherit from Cyanide
 #
 
 BOARD_SEPOLICY_DIRS += \
-    vendor/vrtoxin/sepolicy
+    vendor/cyanide/sepolicy

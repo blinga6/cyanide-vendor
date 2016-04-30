@@ -1,12 +1,12 @@
-# Inherit common VRToxin stuff
-$(call inherit-product, vendor/vrtoxin/config/common_full.mk)
+# Inherit common Cyanide stuff
+$(call inherit-product, vendor/cyanide/config/common_full.mk)
 
-# Required VRToxin packages
+# Required Cyanide packages
 PRODUCT_PACKAGES += \
     LatinIME
 
-# Include VRToxin LatinIME dictionaries
-PRODUCT_PACKAGE_OVERLAYS += vendor/vrtoxin/overlay/dictionaries
+# Include Cyanide LatinIME dictionaries
+PRODUCT_PACKAGE_OVERLAYS += vendor/cyanide/overlay/dictionaries
 
 # Default notification/alarm sounds
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -15,5 +15,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 ifeq ($(TARGET_SCREEN_WIDTH) $(TARGET_SCREEN_HEIGHT),$(space))
     PRODUCT_COPY_FILES += \
-        vendor/vrtoxin/prebuilt/common/bootanimation/800.zip:system/media/bootanimation.zip
+        vendor/cyanide/prebuilt/common/bootanimation/800.zip:system/media/bootanimation.zip
 endif

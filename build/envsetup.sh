@@ -1,10 +1,10 @@
-# VRToxin functions that extend build/envsetup.sh
+# Cyanide functions that extend build/envsetup.sh
 
-function vrtoxin_device_combos() {
+function cyanide_device_combos() {
     local device
 
     T="$(gettop)"
-    list_file="${T}/vendor/vrtoxin/vrtoxin.devices"
+    list_file="${T}/vendor/cyanide/cyanide.devices"
     variant="userdebug"
 
     if [[ $1 ]]
@@ -26,12 +26,12 @@ function vrtoxin_device_combos() {
     if [[ ! -f "${list_file}" ]]
     then
         echo "unable to find device list: ${list_file}"
-        list_file="${T}/vendor/vrtoxin/vrtoxin.devices"
+        list_file="${T}/vendor/cyanide/cyanide.devices"
         echo "defaulting device list file to: ${list_file}"
     fi
 
     while IFS= read -r device
     do
-        add_lunch_combo "vrtoxin_${device}-${variant}"
+        add_lunch_combo "cyanide_${device}-${variant}"
     done < "${list_file}"
 }

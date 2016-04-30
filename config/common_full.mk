@@ -1,10 +1,10 @@
-# Inherit common VRToxin stuff
-$(call inherit-product, vendor/vrtoxin/config/common.mk)
+# Inherit common Cyanide stuff
+$(call inherit-product, vendor/cyanide/config/common.mk)
 
-# Include VRToxin audio files
-include vendor/vrtoxin/config/vrtoxin_audio.mk
+# Include Cyanide audio files
+include vendor/cyanide/config/cyanide_audio.mk
 
-# Optional VRToxin packages
+# Optional Cyanide packages
 PRODUCT_PACKAGES += \
     Galaxy4 \
     HoloSpiralWallpaper \
@@ -17,7 +17,7 @@ PRODUCT_PACKAGES += \
     SoundRecorder \
     PhotoPhase
 
-# Extra tools in VRToxin
+# Extra tools in Cyanide
 PRODUCT_PACKAGES += \
     7z \
     bash \

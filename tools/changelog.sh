@@ -2,7 +2,7 @@
 
 # Exports
 
-. $ANDROID_BUILD_TOP/vendor/vrtoxin/tools/colors
+. $ANDROID_BUILD_TOP/vendor/cyanide/tools/colors
 
 export Changelog=Changelog.txt
 
