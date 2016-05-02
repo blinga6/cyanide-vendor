@@ -219,9 +219,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PACKAGE_OVERLAYS += vendor/cyanide/overlay/common
 
-#Let builder choose custom buildtype. Default to RELEASE
+#Let builder choose custom buildtype. Default to freedom
 ifndef CYANIDE_BUILDTYPE
-CYANIDE_BUILDTYPE = RELEASE
+CYANIDE_BUILDTYPE = Detoxified
 endif
 
 PRODUCT_VERSION_MAJOR = 4
