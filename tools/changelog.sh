@@ -14,6 +14,8 @@ fi
 touch $Changelog
 
 # Print something to build output
+echo ${bldppl}"Generating changelog..."${txtrst}
+
 for i in $(seq 7);
 do
 export After_Date=`date --date="$i days ago" +%Y-%m-%d`
@@ -25,7 +27,7 @@ k=$(expr $i - 1)
 	echo  "     "$Until_Date    >> $Changelog;
 	echo '====================' >> $Changelog;
 	# Cycle through every repo to find commits between 2 dates
-	repo forall -pc 'git log --pretty=format:"%h  %s  [%cn]" --decorate --after=$After_Date --until=$Until_Date' >> $Changelog
+	repo forall -pc 'git log --pretty=format:"%h  %s  [%an]" --decorate --after=$After_Date --until=$Until_Date' >> $Changelog
 	echo >> $Changelog;
         echo >> $Changelog;
 done
