@@ -155,8 +155,8 @@ PRODUCT_PACKAGES += \
 
 # Custom Cyanide packages
 PRODUCT_PACKAGES += \
+    CyanideWeatherService \
     Eleven \
-    LockClock \
     OmniSwitch
 
 # Extra tools in Cyanide
