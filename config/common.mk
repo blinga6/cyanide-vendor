@@ -73,11 +73,11 @@ PRODUCT_COPY_FILES += \
 
 # Workaround for NovaLauncher zipalign fails
 PRODUCT_COPY_FILES += \
-		vendor/cyanide/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
-		
-# Workaround for ESFileManager zipalign fails
+    vendor/cyanide/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
+
+# Workaround for KernelAdiutor zipalign fails
 PRODUCT_COPY_FILES += \
-		vendor/cyanide/prebuilt/common/app/ESFileManager.apk:system/app/ESFileManager.apk
+    vendor/cyanide/prebuilt/common/app/KernelAdiutor.apk:system/app/KernelAdiutor.apk
 
 # SuperSU
 PRODUCT_COPY_FILES += \
@@ -156,6 +156,7 @@ PRODUCT_PACKAGES += \
 # Custom Cyanide packages
 PRODUCT_PACKAGES += \
     CyanideWeatherService \
+    ViPER4Android \
     Eleven \
     OmniSwitch
 
