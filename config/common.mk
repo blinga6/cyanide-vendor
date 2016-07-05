@@ -71,10 +71,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     vendor/cyanide/prebuilt/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
 
-# Workaround for NovaLauncher zipalign fails
-PRODUCT_COPY_FILES += \
-    vendor/cyanide/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
-
 # Workaround for KernelAdiutor zipalign fails
 PRODUCT_COPY_FILES += \
     vendor/cyanide/prebuilt/common/app/KernelAdiutor.apk:system/app/KernelAdiutor.apk
@@ -214,6 +210,16 @@ PRODUCT_PROPERTY_OVERRIDES += \
     media.sf.omx-plugin=libffmpeg_omx.so \
     media.sf.extractor-plugin=libffmpeg_extractor.so
 
+# Enable dexpreopt to reduce no. of app optimizations & time
+OS_TYPE := $(shell uname -s)
+ifneq ($(OS_TYPE),Darwin)
+    WITH_DEXPREOPT ?= true
+    ART_BUILD_TARGET_DEBUG := true
+    ART_BUILD_HOST_DEBUG := true
+else
+    WITH_DEXPREOPT := false
+endif
+
 # These packages are excluded from user builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
 PRODUCT_PACKAGES += \
@@ -232,7 +238,7 @@ ifndef CYANIDE_BUILDTYPE
 CYANIDE_BUILDTYPE = Detoxified
 endif
 
-PRODUCT_VERSION_MAJOR = 4
+PRODUCT_VERSION_MAJOR = 6
 PRODUCT_VERSION_MAINTENANCE = 0
 CYANIDE_VERSION := Cyanide-v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MAINTENANCE)-$(CYANIDE_BUILD)-$(CYANIDE_BUILDTYPE)-$(shell date +%Y%m%d)
 
